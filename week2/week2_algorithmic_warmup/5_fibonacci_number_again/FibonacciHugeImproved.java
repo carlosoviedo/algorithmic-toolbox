@@ -13,28 +13,25 @@ public class FibonacciHugeImproved {
     private static long[] createPisanoPeriod(final long n, final long m) {
         final List<Long> pisanoPeriod = new LinkedList<>();
         pisanoPeriod.add(0l);
-        pisanoPeriod.add(1l);
 
-        BigInteger previous = BigInteger.valueOf(0);
-        BigInteger current  = BigInteger.valueOf(1);
+        long previous = 0;
+        long current  = 1;
         boolean periodComplete = false;
 
         for (long i = 0; i < n - 1; ++i) {
-            BigInteger tmp_previous = previous;
-            previous = current;
-            current = tmp_previous.add(current);
-            periodComplete = previous.equals(BigInteger.valueOf(0)) && current.equals(BigInteger.valueOf(1));
+            long tmp_previous = previous % m;
+            previous = current % m;
+            current = (tmp_previous + current) % m;
+            periodComplete = previous == 0 && current == 1;
             
-            if (!periodComplete) {
-                if ((i + 1) % 2 == 0) {
-                    pisanoPeriod.add(previous.mod(BigInteger.valueOf(m)).longValue());
-                    pisanoPeriod.add(current.mod(BigInteger.valueOf(m)).longValue());
-                } else if (i == n - 2) {
-                    pisanoPeriod.add(current.mod(BigInteger.valueOf(m)).longValue());
-                }
-            } else {
+            if (periodComplete) {
                 break;
             }
+            pisanoPeriod.add(previous);
+        }
+
+        if (!periodComplete) {
+            pisanoPeriod.add(current);
         }
         return pisanoPeriod.stream().mapToLong(l -> l).toArray();
     }
